@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amazon 低评分叶子类目筛选看板</title>
+  <style>
+    :root{--page:#3a147b;--panel-a:#9f78bf;--panel-b:#df5d9c;--panel-c:#c874b9;--text:#ffffff;--ink:#1a1230;--blue:#1595f9;--yellow:#f4fb20;--line:rgba(255,255,255,.24)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Microsoft YaHei",Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 10%,rgba(255,120,220,.35),transparent 28%),linear-gradient(135deg,#40208b 0%,#801d8e 43%,#e22075 100%)}
+    .dashboard{width:min(1360px,100vw);margin:0 auto;padding:8px}.top-grid{display:grid;grid-template-columns:1.45fr 1.72fr;gap:10px;align-items:stretch}.tile{border:1.5px solid #13071e;border-radius:13px;background:linear-gradient(145deg,rgba(183,126,193,.94),rgba(224,91,157,.93));box-shadow:0 2px 0 rgba(0,0,0,.22);overflow:hidden}.title-card{min-height:118px;display:flex;align-items:center;padding:0 24px;background:rgba(183,126,193,.95)}.title-card h1{margin:0;font-size:30px;line-height:1.2;color:#16121e;letter-spacing:0;font-weight:800}.title-card p{margin:9px 0 0;font-size:13px;line-height:1.45;color:#2a1050;font-weight:700}.metadata-card{min-height:118px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;padding:9px 16px;background:linear-gradient(145deg,rgba(183,126,193,.94),rgba(224,91,157,.93))}.meta-cell{display:grid;align-content:center;gap:4px;border:2px solid rgba(255,255,255,.3);background:#704fc5;padding:8px 10px;overflow:hidden}.meta-label{font-size:11px;opacity:.84}.meta-value{font-size:12px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.panel{margin-top:14px;padding:12px 16px 14px;background:rgba(183,126,193,.86);border:1.5px solid #13071e;border-radius:13px;box-shadow:0 2px 0 rgba(0,0,0,.24)}.panel.pink{background:rgba(220,96,158,.88)}.panel h2{margin:0 0 10px;text-align:center;font-size:20px;line-height:1.28;color:#fff;letter-spacing:0}.panel-note{margin:0 0 12px;text-align:center;font-size:12px;font-weight:700;opacity:.92}.rating-list{display:grid;gap:10px}.rating-row{display:grid;grid-template-columns:98px minmax(0,1fr) minmax(210px,.7fr);gap:14px;align-items:center;min-height:92px;padding:12px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.10)}.rating-number{font-size:34px;line-height:1;font-weight:900;color:#fff1a8;text-align:center;font-variant-numeric:tabular-nums}.rating-label{margin-top:7px;text-align:center;font-size:11px;font-weight:700;opacity:.9}.path-block{min-width:0}.path-line{font-size:13px;line-height:1.45;font-weight:800;word-break:break-word}.path-line.zh{margin-top:6px;color:#fff1a8}.path-tag{display:inline-block;min-width:28px;margin-right:6px;color:#fff;font-size:11px;opacity:.78}.progress-wrap{min-width:0}.progress-track{height:24px;overflow:hidden;border-left:1px dotted rgba(255,255,255,.7);border-right:1px dotted rgba(255,255,255,.45);background:rgba(255,255,255,.12)}.progress-fill{height:100%;background:var(--yellow)}.empty-note{padding:38px 14px;text-align:center;font-size:15px;font-weight:800}.footer-note{margin-top:12px;text-align:center;font-size:11px;opacity:.8}@media(max-width:980px){.top-grid{grid-template-columns:1fr;margin-top:12px}.metadata-card{grid-template-columns:1fr 1fr}.rating-row{grid-template-columns:76px 1fr}.progress-wrap{grid-column:1/-1}.title-card h1{font-size:28px}}
+  </style>
+</head>
+<body>
+  <main class="dashboard">
+    <section class="top-grid">
+      <div class="tile title-card"><div><h1>跨境吴老师｜Amazon 低评分叶子类目筛选</h1><p>仅展示满足评分与样本门槛、且已验证为叶子类目的评分分布</p></div></div>
+      <div class="tile metadata-card">
+        <div class="meta-cell"><div class="meta-label">国家/站点</div><div class="meta-value" id="marketplace"></div></div>
+        <div class="meta-cell"><div class="meta-label">一级类目</div><div class="meta-value" id="rootCategory"></div></div>
+        <div class="meta-cell"><div class="meta-label">一级类目 nodeIdPath</div><div class="meta-value" id="rootNodeIdPath"></div></div>
+        <div class="meta-cell"><div class="meta-label">数据月份</div><div class="meta-value" id="month"></div></div>
+        <div class="meta-cell"><div class="meta-label">评分阈值</div><div class="meta-value" id="ratingThreshold"></div></div>
+        <div class="meta-cell"><div class="meta-label">最低评分样本数 / 类目数量</div><div class="meta-value" id="sampleAndCount"></div></div>
+      </div>
+    </section>
+    <section class="panel pink"><h2>低评分叶子类目评分分布</h2><p class="panel-note">按平均评分从低到高排序</p><div class="rating-list" id="ratingList"></div><div class="footer-note">数据来源：卖家精灵 MCP｜筛选口径：avgRating 与 avgRatings</div></section>
+  </main>
+  <script id="dashboard-data" type="application/json">__LOW_RATING_DASHBOARD_DATA_JSON__</script>
+  <script>
+    const D=JSON.parse(document.getElementById('dashboard-data').textContent);const $=id=>document.getElementById(id);const esc=v=>String(v??'未匹配（MCP 未返回）').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const rating=v=>Number.isFinite(Number(v))?Number(v).toFixed(1):'—';
+    function setText(id,value){$(id).textContent=value??'—';$(id).title=value??''}
+    function render(){setText('marketplace',D.marketplace);setText('rootCategory',D.rootCategory);setText('rootNodeIdPath',D.rootNodeIdPath);setText('month',D.month);setText('ratingThreshold',`avgRating <= ${rating(D.maxAvgRating)}`);setText('sampleAndCount',`avgRatings >= ${D.minAvgRatings} ｜ ${D.resultCount??0}个`);const target=$('ratingList');if(D.status!=='ready'){target.innerHTML=`<div class="empty-note">${esc(D.blockReason||'无法完成低评分叶子类目筛选')}</div>`;return}const items=[...(D.items||[])].sort((a,b)=>Number(a.avgRating)-Number(b.avgRating)||String(a.nodeIdPath).localeCompare(String(b.nodeIdPath)));if(!items.length){target.innerHTML='<div class="empty-note">未找到满足当前评分与样本阈值的低评分叶子类目</div>';return}target.innerHTML=items.map(x=>{const v=Math.max(0,Math.min(5,Number(x.avgRating)));return `<article class="rating-row"><div><div class="rating-number">${rating(v)}</div><div class="rating-label">平均评分</div></div><div class="path-block"><div class="path-line"><span class="path-tag">EN</span>${esc(x.categoryPathEn)}</div><div class="path-line zh"><span class="path-tag">ZH</span>${esc(x.categoryPathZh)}</div></div><div class="progress-wrap"><div class="progress-track" title="评分进度"><div class="progress-fill" style="width:${v/5*100}%"></div></div></div></article>`}).join('')}
+    render()
+  </script>
+</body>
+</html>
+
+
