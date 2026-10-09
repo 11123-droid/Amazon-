@@ -1,0 +1,5 @@
+interface:
+  display_name: "Amazon 类目差评选品法"
+  short_description: "调用卖家精灵筛选低评分叶子类目并生成固定 HTML 看板"
+  brand_color: "#801D8E"
+  default_prompt: "使用 $sellersprite-amazon-low-rating-dashboard，按 Amazon 类目差评选品法生成 HTML 看板。"
